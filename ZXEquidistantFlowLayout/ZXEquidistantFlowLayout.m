@@ -56,13 +56,20 @@
     CGFloat rowYOffset = yOffset;// first item's y end in last row, for different item's height in row
     for (NSInteger i = 0; i < itemCount; i++) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
-        CGSize itemSize = [_delegate collectionView:self.collectionView layout:self sizeForItemAtIndexPath:indexPath];
+        CGSize itemSize = CGSizeZero;
+        if ([_delegate respondsToSelector:@selector(collectionView:layout:sizeForItemAtIndexPath:)]) {
+            itemSize = [_delegate collectionView:self.collectionView layout:self sizeForItemAtIndexPath:indexPath];
+        }
         if (xOffset == self.sectionInset.left) {// first item
             xOffset += itemSize.width;
             rowYOffset += itemSize.height;
         } else {
             CGFloat xOffsetMax = xOffset + self.minimumInteritemSpacing + itemSize.width;
-            if (xOffsetMax <= CGRectGetWidth(self.collectionView.bounds) - self.sectionInset.right) {
+            CGSize collectionViewSize = self.collectionView.bounds.size;
+            if ([_delegate respondsToSelector:@selector(collectionViewSize)]) {
+                collectionViewSize = [_delegate collectionViewSize];
+            }
+            if (xOffsetMax <= collectionViewSize.width - self.sectionInset.right) {
                 xOffset = xOffsetMax;
                 rowYOffset = MAX(rowYOffset, yOffset + itemSize.height);
             } else {// new row

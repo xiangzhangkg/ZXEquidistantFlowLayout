@@ -10,6 +10,8 @@
 
 @protocol ZXEquidistantFlowLayoutDelegate <UICollectionViewDelegateFlowLayout>
 
+- (CGSize)collectionViewSize;
+
 @end
 
 @interface ZXEquidistantFlowLayout : UICollectionViewFlowLayout
